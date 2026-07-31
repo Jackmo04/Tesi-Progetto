@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-targets
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vulnerable-web-app
+  namespace: demo-targets
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vulnerable-web-app
+  template:
+    metadata:
+      labels:
+        app: vulnerable-web-app
+    spec:
+      containers:
+      - name: web-app
+        image: vulnerable-web-app:v1
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 9001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vulnerable-web-service
+  namespace: demo-targets
+spec:
+  type: ClusterIP
+  selector:
+    app: vulnerable-web-app
+  ports:
+  - port: 80
+    targetPort: 9001
