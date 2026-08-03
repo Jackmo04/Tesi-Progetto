@@ -22,3 +22,20 @@ kubectl get pods -n demo-targets
 kubectl run attacker -n demo-targets --rm -i --tty --image=curlimages/curl -- sh
 > curl "http://vulnerable-web-service/ping?host=127.0.0.1;cat%20/etc/passwd"
 ```
+
+# 03/08
+## Installazione helm
+```bash
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+## Installazione Falco e primi test
+```bash
+# Aggiunta la repo helm
+helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm repo update
+
+# Installazione Falco
+helm install --replace falco --namespace falco --create-namespace --set tty=true falcosecurity/falco
+```
