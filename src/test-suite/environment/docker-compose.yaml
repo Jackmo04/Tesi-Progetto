@@ -1,0 +1,37 @@
+services:
+  falco:
+    image: falcosecurity/falco:0.44.1 # Latest stable version
+    container_name: falco_monitor
+    privileged: true
+    pid: "host"
+    network_mode: "host"
+    volumes:
+      - /var/run/docker.sock:/host/var/run/docker.sock
+      - /proc:/host/proc:ro
+      - /etc:/host/etc:ro
+      - /sys/kernel/tracing:/sys/kernel/tracing:ro
+      - ./logs:/var/log/falco # Output for logs
+    command: >
+      /usr/bin/falco 
+      -o json_output=true 
+      -o file_output.enabled=true 
+      -o file_output.keep_alive=true 
+      -o file_output.filename=/var/log/falco/falco_events.json
+
+  tetragon:
+    image: quay.io/cilium/tetragon:v1.7.0 # Latest stable version
+    container_name: tetragon_monitor
+    privileged: true
+    pid: "host"
+    cgroup: "host"
+    network_mode: "host"
+    volumes:
+      - /sys/kernel/btf/vmlinux:/var/lib/tetragon/btf
+      - ./logs:/var/log/tetragon # Output for logs
+      - ./tetragon-policies:/etc/tetragon/tetragon.tp.d
+    command: >
+      /usr/bin/tetragon 
+      --bpf-lib /var/lib/tetragon/ 
+      --export-filename /var/log/tetragon/tetragon_events.json
+      --tracing-policy-dir /etc/tetragon/tetragon.tp.d
+      --export-allowlist '{"event_set":["PROCESS_KPROBE", "PROCESS_TRACEPOINT", "PROCESS_LSM"]}'
