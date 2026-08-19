@@ -1,0 +1,2 @@
+# Ignore json in this directory, since they are logs
+*.json
