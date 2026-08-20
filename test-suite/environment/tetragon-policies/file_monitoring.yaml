@@ -20,6 +20,8 @@ spec:
         - operator: "NotIn"
           values:
           - "/usr/bin/falco"
+          - "/usr/bin/dockerd"
+          - "/usr/sbin/runc"
 #   - call: "security_file_permission"
 #     syscall: false
 #     return: true
