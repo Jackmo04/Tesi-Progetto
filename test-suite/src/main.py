@@ -1,7 +1,8 @@
-if __name__ == "__main__":
-    from model import Test, TestType
-    from runner import TestRunner
+from model import Test, TestType
+from runner import TestRunner
 
+if __name__ == "__main__":
+    
     # Prove
     tests = [
         Test(
