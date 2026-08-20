@@ -16,6 +16,8 @@ if __name__ == "__main__":
 
     runner = TestRunner()
     for test in tests:
-        print(f"Running test: {test}")
+        print(f"[*] Running test: {test.name} (Category: {test.category}, Type: {test.test_type.value})")
         test_id, duration_ms = runner.run_test(test)
-        print(f"Test executed in {duration_ms:.2f} ms, Test ID: {test_id}")
+        print(f"[+] Test executed in {duration_ms:.2f} ms, Test ID: {test_id}", end="\n\n")
+
+    print("[+] All tests executed.") # TODO: print results to file
