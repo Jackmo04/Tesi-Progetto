@@ -1,0 +1,66 @@
+[
+  {
+    "id": "EXEC-01",
+    "name": "Interactive Shell Spawn",
+    "category": "Execution",
+    "test_type": "malicious",
+    "command": "/bin/bash -c 'whoami'",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "EXEC-02",
+    "name": "Execution from /tmp",
+    "category": "Execution",
+    "test_type": "malicious",
+    "command": "cp /bin/ls /tmp/malware && /tmp/malware",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "PRIV-01",
+    "name": "Sensitive File Modification (/etc/shadow)",
+    "category": "Privilege Escalation",
+    "test_type": "malicious",
+    "command": "echo 'hacked' >> /etc/shadow",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "EVASION-01",
+    "name": "Path Obfuscation via Symlink",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "ln -s /usr/bin/curl /tmp/update && /tmp/update http://example.com",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "EVASION-02",
+    "name": "Process Masquerading (kworker)",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "bash -c 'exec -a [kworker/u4:2] /bin/sh -c \"sleep 1\"'",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "NET-01",
+    "name": "Suspicious Network Connection (Netcat)",
+    "category": "Network",
+    "test_type": "malicious",
+    "command": "apt-get update -qq && apt-get install -y netcat-openbsd -qq && nc -z 8.8.8.8 53",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "NOISE-01",
+    "name": "Standard Package Update (APT)",
+    "category": "Noise",
+    "test_type": "benign",
+    "command": "apt-get update && apt-get install -y vim",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "NOISE-02",
+    "name": "High IOPS / Compiler Activity",
+    "category": "Noise",
+    "test_type": "benign",
+    "command": "apt-get update -qq && apt-get install -y gcc -qq && echo 'int main(){return 0;}' > test.c && gcc test.c -o test && ./test",
+    "container_image": "ubuntu:latest"
+  }
+]

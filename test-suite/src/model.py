@@ -8,8 +8,10 @@ class TestType(Enum):
 
 @dataclass
 class Test:
+    id: str
     name: str
     test_type: TestType
+    category: str
     command: str
     container_image: str = "ubuntu:latest"
 

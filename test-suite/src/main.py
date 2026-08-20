@@ -1,21 +1,19 @@
+from loader import TestLoader
 from model import Test, TestType
 from runner import TestRunner
+import argparse
+
+parser = argparse.ArgumentParser(description="Run security tests")
+parser.add_argument("-d", "--test-dir", default=".", help="directory in which to look for test files", type=str)
 
 if __name__ == "__main__":
-    
-    # Prove
-    tests = [
-        Test(
-            name="Example Test 1",
-            test_type=TestType.MALICIOUS,
-            command="cat /etc/shadow"
-        ),
-        Test(
-            name="Example Test 2",
-            test_type=TestType.BENIGN,
-            command="echo 'Hello, World!'"
-        )
-    ]
+    args = parser.parse_args()
+    loader = TestLoader(test_directory=args.test_dir)
+    tests = loader.load_tests()
+
+    if not tests:
+        print("No tests found in the specified directory.")
+        exit(1)
 
     runner = TestRunner()
     for test in tests:
