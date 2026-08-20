@@ -1,5 +1,4 @@
 from loader import TestLoader
-from model import Test, TestType
 from runner import TestRunner
 import argparse
 
