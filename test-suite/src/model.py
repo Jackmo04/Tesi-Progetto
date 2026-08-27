@@ -21,3 +21,11 @@ class TestResult:
     executed_at: datetime
     duration_ms: float
     outcome: str = None
+
+@dataclass
+class SecurityEvent:
+    source: str
+    timestamp: datetime
+    test_id: str
+    rule_name: str
+    raw_event: dict
