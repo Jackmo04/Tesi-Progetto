@@ -1,6 +1,7 @@
 import asyncio
 import argparse
 import logging
+import signal
 from datetime import datetime
 
 from collector import TelemetryCollector
@@ -26,29 +27,46 @@ async def main():
 
     collector = TelemetryCollector(falco_log_path=args.falco_log, tetragon_log_path=args.tetragon_log)
     collector_task = asyncio.create_task(collector.start())
+    shutdown_event = asyncio.Event()
+
+    def handle_sigint():
+        logger.info("SIGINT received, stopping test execution...")
+        collector.stop()
+        shutdown_event.set()
+
+    loop = asyncio.get_running_loop()
+    loop.add_signal_handler(signal.SIGINT, handle_sigint)
 
     runner = TestRunner()
     results = []
 
     logger.info("Starting test execution...")
-    for test in tests:
-        logger.info(f"[{test.id}] Preparing test: {test.name} (Category: {test.category}, Type: {test.test_type.value})")
+    try:
+        for test in tests:
+            logger.info(f"[{test.id}] Preparing test: {test.name} (Category: {test.category}, Type: {test.test_type.value})")
 
-        test_id, duration_ms = runner.run_test(test)
-        await asyncio.sleep(2.0)  # Allow some time for the production of events to be collected. TODO: tune timing
+            test_id, duration_ms = runner.run_test(test)
+            try:
+                await asyncio.wait_for(shutdown_event.wait(), timeout=2.0) # Allow some time for the production of events to be collected. TODO: tune timing
+            except asyncio.TimeoutError:
+                pass
 
-        matching_events = [event for event in collector.events if event.test_id == test_id]
-        results.append(TestResult(
-            test=test,
-            executed_at=datetime.now(),
-            duration_ms=duration_ms,
-            events_detected=matching_events
-        ))
+            matching_events = [event for event in collector.events if event.test_id == test_id]
+            results.append(TestResult(
+                test=test,
+                executed_at=datetime.now(),
+                duration_ms=duration_ms,
+                events_detected=matching_events
+            ))
 
-    collector.stop()
-    logger.info("All tests executed.")
+            if shutdown_event.is_set():
+                break
+    finally:
+        collector.stop()
+        await collector_task
+    logger.info("Finished test execution.")
 
-    # Temporary printout of results. TODO: implement Evaluator.
+    # Temporary printout of results. TODO: implement Evaluator and CSV output.
     print("\nTest Results:")
     for result in results:
         print(f"Test: {result.test.name} (Category: {result.test.category}, Type: {result.test.test_type.value})")
