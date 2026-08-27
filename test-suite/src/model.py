@@ -20,6 +20,7 @@ class TestResult:
     test: Test
     executed_at: datetime
     duration_ms: float
+    events_detected: list
     outcome: str = None
 
 @dataclass

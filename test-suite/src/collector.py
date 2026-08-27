@@ -5,11 +5,13 @@ from datetime import datetime
 
 from model import SecurityEvent
 
+logger = logging.getLogger(__name__)
+
 class TelemetryCollector:
     def __init__(self, falco_log_path: str, tetragon_log_path: str):
         self.falco_log_path = falco_log_path
         self.tetragon_log_path = tetragon_log_path
-        self.events = list[SecurityEvent] = []
+        self.events: list[SecurityEvent] = []
         self._running = False
 
     async def start(self):
@@ -19,7 +21,7 @@ class TelemetryCollector:
             self._collect_tetragon_events()
         )
 
-    async def stop(self):
+    def stop(self):
         self._running = False
 
     async def _collect_falco_events(self):
@@ -39,13 +41,13 @@ class TelemetryCollector:
                         event = SecurityEvent(
                             source="falco",
                             timestamp=datetime.fromisoformat(event_data["time"]),
-                            test_id=container_id[:12].lower() # Normalize the container ID
+                            test_id=container_id[:12].lower(), # Normalize the container ID
                             rule_name=event_data.get("rule", "Unknown"),
                             raw_event=event_data
                         )
                         self.events.append(event)
         except Exception as e:
-            logging.error(f"Error while collecting Falco events: {e}")
+            logger.error(f"Error while collecting Falco events: {e}")
 
     async def _collect_tetragon_events(self):
         try:
@@ -75,4 +77,4 @@ class TelemetryCollector:
                         )
                         self.events.append(event)
         except Exception as e:
-            logging.error(f"Error while collecting Tetragon events: {e}")
+            logger.error(f"Error while collecting Tetragon events: {e}")
