@@ -14,9 +14,9 @@ parser.add_argument("-f", "--falco-log", required=True, help="path to the Falco 
 parser.add_argument("-t", "--tetragon-log", required=True, help="path to the Tetragon log file (has to be in JSON format)", type=str)
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(name)s: %(message)s")
 
 async def main():
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     args = parser.parse_args()
     tests = TestLoader.load_tests(test_directory=args.test_dir)
 
@@ -47,6 +47,16 @@ async def main():
 
     collector.stop()
     logger.info("All tests executed.")
+
+    # Temporary printout of results. TODO: implement Evaluator.
+    print("\nTest Results:")
+    for result in results:
+        print(f"Test: {result.test.name} (Category: {result.test.category}, Type: {result.test.test_type.value})")
+        print(f"Executed at: {result.executed_at}, Duration: {result.duration_ms:.2f} ms")
+        print(f"Events Detected: {len(result.events_detected)}")
+        for event in result.events_detected:
+            print(f"  - Source: {event.source}, Rule: {event.rule_name}, Timestamp: {event.timestamp}")
+        print("-" * 40)
 
 if __name__ == "__main__":
     asyncio.run(main())

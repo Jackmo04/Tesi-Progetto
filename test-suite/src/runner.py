@@ -1,7 +1,10 @@
 import time
 import docker
+import logging
 
 from model import Test
+
+logger = logging.getLogger(__name__)
 
 class TestRunner:
     def __init__(self):
@@ -16,12 +19,12 @@ class TestRunner:
                 detach=True,
             )
             short_container_id = container.id[:12]
-            # print(f"Container created with ID: {container_id[:12]}")
+            logger.info(f"Created container {short_container_id} for test '{test.name}'")
             container.start()
-            container.wait(timeout=10)
+            container.wait(timeout=30)
             container.remove(force=True)
         except Exception as e:
-            print(f"Error occurred while running test: {e}")
+            logger.error(f"Error occurred while running test: {e}")
 
         duration_ms = (time.time() - start_time) * 1000
         return short_container_id, duration_ms
