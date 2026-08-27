@@ -7,8 +7,7 @@ parser.add_argument("-d", "--test-dir", default=".", help="directory in which to
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    loader = TestLoader(test_directory=args.test_dir)
-    tests = loader.load_tests()
+    tests = TestLoader.load_tests(test_directory=args.test_dir)
 
     if not tests:
         print("No tests found in the specified directory.")

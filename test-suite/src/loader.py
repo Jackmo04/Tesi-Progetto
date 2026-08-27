@@ -4,14 +4,12 @@ import os
 from model import Test, TestType
 
 class TestLoader:
-    def __init__(self, test_directory: str):
-        self.test_directory = test_directory
-
-    def load_tests(self) -> list[Test]:
+    @staticmethod
+    def load_tests(test_directory: str) -> list[Test]:
         tests = []
-        for filename in os.listdir(self.test_directory):
+        for filename in os.listdir(test_directory):
             if filename.endswith(".json"):
-                file_path = os.path.join(self.test_directory, filename)
+                file_path = os.path.join(test_directory, filename)
                 with open(file_path, "r") as f:
                     data = json.load(f)
 
