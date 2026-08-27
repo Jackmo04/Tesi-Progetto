@@ -14,7 +14,7 @@ parser.add_argument("-f", "--falco-log", required=True, help="path to the Falco 
 parser.add_argument("-t", "--tetragon-log", required=True, help="path to the Tetragon log file (has to be in JSON format)", type=str)
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(name)s: %(message)s")
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 async def main():
     args = parser.parse_args()
@@ -32,7 +32,7 @@ async def main():
 
     logger.info("Starting test execution...")
     for test in tests:
-        logger.info(f"Running test: {test.name} (Category: {test.category}, Type: {test.test_type.value})")
+        logger.info(f"[{test.id}] Preparing test: {test.name} (Category: {test.category}, Type: {test.test_type.value})")
 
         test_id, duration_ms = runner.run_test(test)
         await asyncio.sleep(2.0)  # Allow some time for the production of events to be collected. TODO: tune timing
