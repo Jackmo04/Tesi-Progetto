@@ -1,0 +1,22 @@
+FROM golang:1.21 AS builder
+WORKDIR /build
+
+RUN git clone https://github.com/activeshadow/go-atomicredteam.git .
+RUN go mod tidy && GOOS=linux GOARCH=amd64 go build -o goart ./cmd/main.go
+
+FROM ubuntu:latest
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    wget \
+    netcat-openbsd \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /build/goart /usr/local/bin/goart
+RUN chmod +x /usr/local/bin/goart
+RUN git clone https://github.com/redcanaryco/atomic-red-team.git /opt/atomic-red-team
+ENV ATOMICS_DIR=/opt/atomic-red-team/atomics
+WORKDIR /opt/atomic-red-team
