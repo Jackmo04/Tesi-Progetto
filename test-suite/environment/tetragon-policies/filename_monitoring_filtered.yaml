@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
-  name: "file-monitoring-filtered"
+  name: "block-etc-write"
 spec:
   kprobes:
   - call: "security_file_permission"
@@ -18,10 +18,9 @@ spec:
     selectors:
     - matchArgs:      
       - index: 0
-        operator: "Equal"
+        operator: "Prefix"
         values:
-        - "/etc/passwd"
-        - "/etc/shadow"
+        - "/etc/"
       - index: 1
         operator: "Equal"
         values:
@@ -42,10 +41,9 @@ spec:
     selectors:
     - matchArgs:
       - index: 0
-        operator: "Equal"
+        operator: "Prefix"
         values:
-        - "/etc/passwd" # the files that we care
-        - "/etc/shadow"
+        - "/etc/"
       - index: 1
         operator: "Mask"
         values:
@@ -62,7 +60,6 @@ spec:
     selectors:
     - matchArgs:
       - index: 0
-        operator: "Equal"
+        operator: "Prefix"
         values:
-        - "/etc/passwd" # the files that we care
-        - "/etc/shadow"
+        - "/etc/"
