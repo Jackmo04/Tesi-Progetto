@@ -1,7 +1,6 @@
 FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND=noninteractive
-
 RUN apt-get update && apt-get install -y \
     curl \
     git \
@@ -10,13 +9,14 @@ RUN apt-get update && apt-get install -y \
     iproute2 \
     python3 \
     golang-go \
+    make \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
-
-RUN git clone https://github.com/redcanaryco/atomic-red-team.git /opt/atomic-red-team
 
 ENV GOPATH=$HOME/go
 ENV PATH=$PATH:$GOPATH/bin
 
-RUN go install github.com/redcanaryco/go-atomicredteam/cmd/goart@latest
+RUN git clone https://github.com/activeshadow/go-atomicredteam.git /goart && cd /goart && make bin/goart
+ENV PATH=$PATH:/goart/bin
 
-WORKDIR /opt/atomic-red-team/atomics
+CMD ["goart"]
