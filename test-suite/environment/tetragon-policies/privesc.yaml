@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: "detect-privilege-escalation"
+spec:
+  kprobes:
+  - call: "security_capset"
+    syscall: false
+    args:
+    - index: 0
+      type: "cred"
+    - index: 1
+      type: "cred"
+    - index: 2
+      type: "cap_effective"
+    - index: 3
+      type: "cap_inheritable"
+    - index: 4
+      type: "cap_permitted"
+    selectors:
+    - matchBinaries:
+      - operator: "NotIn"
+        values:
+        - "/usr/sbin/runc"
