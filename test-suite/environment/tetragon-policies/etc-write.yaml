@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
-  name: "block-etc-write"
+  name: "detect-etc-write"
 spec:
   kprobes:
   - call: "security_file_permission"
