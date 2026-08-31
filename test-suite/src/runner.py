@@ -22,7 +22,7 @@ class TestRunner:
             logger.info(f"[{test.id}] Created container with ID: {short_container_id}")
             container.start()
             logger.info(f"[{test.id}] Started container. Running test...")
-            container.wait(timeout=30)
+            container.wait(timeout=60)
             container.remove(force=True)
             logger.info(f"[{test.id}] Test completed and container removed")
         except Exception as e:

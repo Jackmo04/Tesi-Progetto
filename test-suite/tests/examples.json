@@ -28,7 +28,7 @@
     "name": "Path Obfuscation via Symlink",
     "category": "Evasion",
     "test_type": "malicious",
-    "command": "bash -c 'ln -s /usr/bin/curl /tmp/update && /tmp/update http://example.com'",
+    "command": "bash -c 'ln -s /usr/bin/cat /tmp/update && /tmp/update /etc/passwd'",
     "container_image": "ubuntu:latest"
   },
   {
@@ -41,10 +41,26 @@
   },
   {
     "id": "NET-01",
-    "name": "Suspicious Network Connection (Netcat)",
+    "name": "Suspicious Network Connection to External IP",
     "category": "Network",
     "test_type": "malicious",
-    "command": "bash -c 'apt-get update -qq && apt-get install -y netcat-openbsd -qq && nc -z 8.8.8.8 53'",
-    "container_image": "ubuntu:latest"
+    "command": "nc -z 8.8.8.8 53",
+    "container_image": "custom/alpine-netcat:v1.0"
+  },
+  {
+    "id": "STRESS-01",
+    "name": "Syscall Flood (Exec & Open)",
+    "category": "Stress",
+    "test_type": "malicious",
+    "command": "stress-ng --exec 8 --open 8 --timeout 30s",
+    "container_image": "custom/alpine-stress:v1.0"
+  },
+  {
+    "id": "STRESS-02",
+    "name": "I/O & Memory Stress Test",
+    "category": "Stress",
+    "test_type": "malicious",
+    "command": "stress-ng --hdd 4 --vm 2 --vm-bytes 128M --timeout 30s",
+    "container_image": "custom/alpine-stress:v1.0"
   }
 ]
