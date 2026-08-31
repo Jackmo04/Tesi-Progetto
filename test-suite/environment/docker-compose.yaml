@@ -17,6 +17,10 @@ services:
       -o file_output.enabled=true 
       -o file_output.keep_alive=true 
       -o file_output.filename=/var/log/falco/falco_events.json
+      -o metrics.enabled=true
+      -o webserver.enabled=true
+      -o webserver.listen_port=8765
+      -o webserver.prometheus_metrics_enabled=true
 
   tetragon:
     image: quay.io/cilium/tetragon:v1.7.0 # Latest stable version
@@ -35,3 +39,11 @@ services:
       --export-filename /var/log/tetragon/tetragon_events.json
       --tracing-policy-dir /etc/tetragon/tetragon.tp.d
       --export-allowlist '{"event_set":["PROCESS_KPROBE", "PROCESS_TRACEPOINT", "PROCESS_LSM"]}'
+      --metrics-server :2112
+    
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    container_name: prometheus
+    network_mode: "host"
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yml:ro
