@@ -12,23 +12,23 @@ class TelemetryCollector:
         self.falco_log_path = falco_log_path
         self.tetragon_log_path = tetragon_log_path
         self.events: list[SecurityEvent] = []
-        self._running = False
+        self._stop_event = asyncio.Event()
 
     async def start(self):
-        self._running = True
+        self._stop_event.clear()
         await asyncio.gather(
             self._collect_falco_events(),
             self._collect_tetragon_events()
         )
 
     def stop(self):
-        self._running = False
+        self._stop_event.set()
 
     async def _collect_falco_events(self):
         try:
             with open(self.falco_log_path, "r") as f:
                 f.seek(0, 2)
-                while self._running:
+                while not self._stop_event.is_set():
                     line = f.readline()
                     if not line:
                         await asyncio.sleep(0.05)
@@ -53,7 +53,7 @@ class TelemetryCollector:
         try:
             with open(self.tetragon_log_path, "r") as f:
                 f.seek(0, 2)
-                while self._running:
+                while not self._stop_event.is_set():
                     line = f.readline()
                     if not line:
                         await asyncio.sleep(0.05)
