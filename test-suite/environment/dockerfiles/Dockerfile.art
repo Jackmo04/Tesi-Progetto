@@ -1,17 +1,16 @@
-FROM ubuntu:latest
+FROM alpine:latest
 
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y \
+RUN apk add --no-cache \
+    bash \
     curl \
     git \
     sudo \
     wget \
     iproute2 \
     python3 \
-    golang-go \
+    go \
     make \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
+    unzip
 
 ENV GOPATH=$HOME/go
 ENV PATH=$PATH:$GOPATH/bin
