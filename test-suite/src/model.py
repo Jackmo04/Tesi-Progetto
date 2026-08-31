@@ -22,6 +22,9 @@ class TestResult:
     duration_ms: float
     events_detected: list
     outcome: str = None
+    performance_stats: dict = None
+    falco_drops: float = 0.0
+    tetragon_drops: float = 0.0
 
 @dataclass
 class SecurityEvent:

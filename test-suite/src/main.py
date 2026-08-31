@@ -8,6 +8,7 @@ from collector import TelemetryCollector
 from loader import TestLoader
 from runner import TestRunner
 from model import TestResult
+from metrics import PerformanceMonitor
 
 parser = argparse.ArgumentParser(description="Run security tests")
 parser.add_argument("-d", "--test-dir", default=".", help="directory in which to look for test files. (default: .)", type=str)
@@ -38,6 +39,7 @@ async def main():
     loop.add_signal_handler(signal.SIGINT, handle_sigint)
 
     runner = TestRunner()
+    perf_monitor = PerformanceMonitor()
     results = []
 
     logger.info("Starting test execution...")
@@ -45,18 +47,27 @@ async def main():
         for test in tests:
             logger.info(f"[{test.id}] Preparing test: {test.name} (Category: {test.category}, Type: {test.test_type.value})")
 
+            drops_start = PerformanceMonitor.get_drop_metrics()
+            perf_monitor.start()
+
             test_id, duration_ms = runner.run_test(test)
             try:
                 await asyncio.wait_for(shutdown_event.wait(), timeout=2.0) # Allow some time for the production of events to be collected. TODO: tune timing
             except asyncio.TimeoutError:
                 pass
 
+            perf_stats = perf_monitor.stop()
+            drops_end = PerformanceMonitor.get_drop_metrics()
+
             matching_events = [event for event in collector.events if event.test_id == test_id]
             results.append(TestResult(
                 test=test,
                 executed_at=datetime.now(),
                 duration_ms=duration_ms,
-                events_detected=matching_events
+                events_detected=matching_events,
+                performance_stats=perf_stats,
+                falco_drops=drops_end["falco"] - drops_start["falco"],
+                tetragon_drops=drops_end["tetragon"] - drops_start["tetragon"]
             ))
 
             if shutdown_event.is_set():
@@ -74,6 +85,11 @@ async def main():
         print(f"Events Detected: {len(result.events_detected)}")
         for event in result.events_detected:
             print(f"  - Source: {event.source}, Rule: {event.rule_name}, Timestamp: {event.timestamp}")
+        print(f"Performance and Dropped Events: ")
+        falco_perf = result.performance_stats.get('falco_monitor', {})
+        tetragon_perf = result.performance_stats.get('tetragon_monitor', {})
+        print(f"  - Falco: CPU Avg: {falco_perf.get('cpu_avg', 0.0):.2f}%, RAM Max: {falco_perf.get('ram_max', 0.0):.2f} MB, Drops: {result.falco_drops}")
+        print(f"  - Tetragon: CPU Avg: {tetragon_perf.get('cpu_avg', 0.0):.2f}%, RAM Max: {tetragon_perf.get('ram_max', 0.0):.2f} MB, Drops: {result.tetragon_drops}")
         print("-" * 40)
 
 if __name__ == "__main__":
