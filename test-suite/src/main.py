@@ -2,7 +2,6 @@ import asyncio
 import argparse
 import logging
 import signal
-from datetime import datetime, timezone
 
 from collector import TelemetryCollector
 from evaluator import Evaluator
@@ -33,7 +32,11 @@ async def main():
         print("No tests found in the specified file.")
         exit(1)
 
-    collector = TelemetryCollector(falco_log_path=args.falco_logs, tetragon_log_path=args.tetragon_logs)
+    try:
+        collector = TelemetryCollector(falco_log_path=args.falco_logs, tetragon_log_path=args.tetragon_logs)
+    except Exception as e:
+        logger.error(f"Error initializing TelemetryCollector: {e}")
+        exit(1)
     collector_task = asyncio.create_task(collector.start())
     shutdown_event = asyncio.Event()
 
@@ -105,8 +108,12 @@ async def main():
     for tool, data in metrics.items():
         print(f"  - {tool.capitalize()}: Recall: {data['Recall']:.2f}, Precision: {data['Precision']:.2f}, Avg Latency: {data['Avg_Latency_ms']:.2f} ms")
 
-    Exporter.export_to_csv(results, metrics, filename=args.output_csv)
-    logger.info(f"Results exported to {args.output_csv}")
+    try:
+        Exporter.export_to_csv(results, metrics, filename=args.output_csv)
+        logger.info(f"Results exported to {args.output_csv}")
+    except Exception as e:
+        logger.error(f"Error exporting results to CSV: {e}")
+        exit(1)
 
 if __name__ == "__main__":
     asyncio.run(main())
