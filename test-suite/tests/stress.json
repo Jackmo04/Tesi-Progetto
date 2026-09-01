@@ -1,0 +1,18 @@
+[
+  {
+    "id": "STRESS-01",
+    "name": "Syscall Flood (Exec & Open)",
+    "category": "Stress",
+    "test_type": "malicious",
+    "command": "stress-ng --exec 8 --open 8 --timeout 30s",
+    "container_image": "custom/alpine-stress:v1.0"
+  },
+  {
+    "id": "STRESS-02",
+    "name": "I/O & Memory Stress Test",
+    "category": "Stress",
+    "test_type": "malicious",
+    "command": "stress-ng --hdd 4 --vm 2 --vm-bytes 128M --timeout 30s",
+    "container_image": "custom/alpine-stress:v1.0"
+  }
+]
