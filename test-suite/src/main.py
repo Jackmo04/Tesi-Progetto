@@ -26,12 +26,19 @@ async def main():
     except Exception as e:
         logger.error(f"Error parsing arguments: {e}")
         exit(1)
-    tests = TestLoader.load_tests(test_file=args.test_file)
+
+    # TODO: Add validation. See GitHub issue #3
+    try:
+        tests = TestLoader.load_tests(test_file=args.test_file)
+    except Exception as e:
+        logger.error(f"Error loading tests from {args.test_file}: {e}")
+        exit(1)
 
     if not tests:
         print("No tests found in the specified file.")
         exit(1)
 
+    # TODO: Add validation. See GitHub issue #3
     try:
         collector = TelemetryCollector(falco_log_path=args.falco_logs, tetragon_log_path=args.tetragon_logs)
     except Exception as e:
@@ -108,6 +115,7 @@ async def main():
     for tool, data in metrics.items():
         print(f"  - {tool.capitalize()}: Recall: {data['Recall']:.2f}, Precision: {data['Precision']:.2f}, Avg Latency: {data['Avg_Latency_ms']:.2f} ms")
 
+    # TODO: Add validation. See GitHub issue #3
     try:
         Exporter.export_to_csv(results, metrics, filename=args.output_csv)
         logger.info(f"Results exported to {args.output_csv}")
