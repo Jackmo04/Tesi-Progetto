@@ -1,0 +1,50 @@
+[
+  {
+    "id": "EXEC-01",
+    "name": "Interactive Shell Spawn",
+    "category": "Execution",
+    "test_type": "malicious",
+    "command": "bash -i",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "EXEC-02",
+    "name": "Execution from /tmp",
+    "category": "Execution",
+    "test_type": "malicious",
+    "command": "bash -c 'cp /bin/ls /tmp/malware && /tmp/malware'",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "PRIV-01",
+    "name": "Sensitive File Modification (/etc/shadow)",
+    "category": "Privilege Escalation",
+    "test_type": "malicious",
+    "command": "bash -c 'echo hacked >> /etc/shadow'",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "EVASION-01",
+    "name": "Path Obfuscation via Symlink",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "bash -c 'ln -s /usr/bin/cat /tmp/update && /tmp/update /etc/passwd'",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "EVASION-02",
+    "name": "Process Masquerading (kworker)",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "bash -c 'exec -a [kworker/u4:2] /bin/sh -c \"sleep 1\"'",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "NET-01",
+    "name": "Suspicious Network Connection to External IP",
+    "category": "Network",
+    "test_type": "malicious",
+    "command": "nc -z 8.8.8.8 53",
+    "container_image": "custom/alpine-netcat:v1.0"
+  }
+]

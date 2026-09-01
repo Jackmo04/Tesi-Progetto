@@ -68,10 +68,10 @@ class TelemetryCollector:
 
                     if container_id and container_id != "host":
                         rule = (event_data.get("process_kprobe", {}).get("policy_name") or process.get("binary", "Unknown"))
-                        timestamp_str = event_data.get("start_time")
+                        timestamp_str = event_data.get("time")
                         event = SecurityEvent(
                             source="tetragon",
-                            timestamp=datetime.fromisoformat(timestamp_str) if timestamp_str else None,
+                            timestamp=datetime.fromisoformat(timestamp_str),
                             test_id=container_id[:12].lower(), # Normalize the container ID
                             rule_name=rule,
                             raw_event=event_data

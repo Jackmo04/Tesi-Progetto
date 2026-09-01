@@ -2,31 +2,36 @@ import asyncio
 import argparse
 import logging
 import signal
-from datetime import datetime
+from datetime import datetime, timezone
 
 from collector import TelemetryCollector
+from evaluator import Evaluator
 from loader import TestLoader
 from runner import TestRunner
 from model import TestResult
 from metrics import PerformanceMonitor
 
 parser = argparse.ArgumentParser(description="Run security tests")
-parser.add_argument("-d", "--test-dir", default=".", help="directory in which to look for test files. (default: .)", type=str)
-parser.add_argument("-f", "--falco-log", required=True, help="path to the Falco log file (has to be in JSON format)", type=str)
-parser.add_argument("-t", "--tetragon-log", required=True, help="path to the Tetragon log file (has to be in JSON format)", type=str)
+parser.add_argument("-i", "--test-file", required=True, help="JSON file containing the test cases", type=str)
+parser.add_argument("-f", "--falco-logs", required=True, help="path to the Falco log file (has to be in JSON format)", type=str)
+parser.add_argument("-t", "--tetragon-logs", required=True, help="path to the Tetragon log file (has to be in JSON format)", type=str)
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 async def main():
-    args = parser.parse_args()
-    tests = TestLoader.load_tests(test_directory=args.test_dir)
+    try:
+        args = parser.parse_args()
+    except Exception as e:
+        logger.error(f"Error parsing arguments: {e}")
+        exit(1)
+    tests = TestLoader.load_tests(test_file=args.test_file)
 
     if not tests:
-        print("No tests found in the specified directory.")
+        print("No tests found in the specified file.")
         exit(1)
 
-    collector = TelemetryCollector(falco_log_path=args.falco_log, tetragon_log_path=args.tetragon_log)
+    collector = TelemetryCollector(falco_log_path=args.falco_logs, tetragon_log_path=args.tetragon_logs)
     collector_task = asyncio.create_task(collector.start())
     shutdown_event = asyncio.Event()
 
@@ -50,7 +55,7 @@ async def main():
             drops_start = PerformanceMonitor.get_drop_metrics()
             perf_monitor.start()
 
-            test_id, duration_ms = runner.run_test(test)
+            test_id, executed_at, duration_ms = runner.run_test(test)
             try:
                 await asyncio.wait_for(shutdown_event.wait(), timeout=2.0) # Allow some time for the production of events to be collected. TODO: tune timing
             except asyncio.TimeoutError:
@@ -62,7 +67,7 @@ async def main():
             matching_events = [event for event in collector.events if event.test_id == test_id]
             results.append(TestResult(
                 test=test,
-                executed_at=datetime.now(),
+                executed_at=executed_at,
                 duration_ms=duration_ms,
                 events_detected=matching_events,
                 performance_stats=perf_stats,
@@ -91,6 +96,12 @@ async def main():
         print(f"  - Falco: CPU Avg: {falco_perf.get('cpu_avg', 0.0):.2f}%, RAM Max: {falco_perf.get('ram_max', 0.0):.2f} MB, Drops: {result.falco_drops}")
         print(f"  - Tetragon: CPU Avg: {tetragon_perf.get('cpu_avg', 0.0):.2f}%, RAM Max: {tetragon_perf.get('ram_max', 0.0):.2f} MB, Drops: {result.tetragon_drops}")
         print("-" * 40)
+
+    evaluator = Evaluator()
+    metrics = evaluator.evaluate(results)
+    print("\nEvaluation Metrics:")
+    for tool, data in metrics.items():
+        print(f"  - {tool.capitalize()}: Recall: {data['Recall']:.2f}, Precision: {data['Precision']:.2f}, Avg Latency: {data['Avg_Latency_ms']:.2f} ms")
 
 if __name__ == "__main__":
     asyncio.run(main())

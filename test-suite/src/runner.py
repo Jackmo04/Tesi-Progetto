@@ -1,4 +1,5 @@
 import time
+from datetime import datetime, timezone
 import docker
 import logging
 
@@ -21,6 +22,7 @@ class TestRunner:
             short_container_id = container.id[:12]
             logger.info(f"[{test.id}] Created container with ID: {short_container_id}")
             container.start()
+            executed_at = datetime.now(tz=timezone.utc)
             logger.info(f"[{test.id}] Started container. Running test...")
             container.wait(timeout=60)
             container.remove(force=True)
@@ -29,4 +31,4 @@ class TestRunner:
             logger.error(f"[{test.id}] Error occurred while running test: {e}")
 
         duration_ms = (time.time() - start_time) * 1000
-        return short_container_id, duration_ms
+        return short_container_id, executed_at, duration_ms
