@@ -13,7 +13,8 @@ class Test:
     test_type: TestType
     category: str
     command: str
-    container_image: str = "ubuntu:latest"
+    shell_wrap: bool = False
+    container_image: str = "alpine:latest"
 
 @dataclass
 class TestResult:

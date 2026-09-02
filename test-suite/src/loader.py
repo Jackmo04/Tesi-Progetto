@@ -17,6 +17,7 @@ class TestLoader:
                 category=item["category"],
                 test_type=TestType(item["test_type"]),
                 container_image=item["container_image"],
+                shell_wrap=item.get("shell_wrap", False),
                 command=item["command"]
             )
             tests.append(test)

@@ -5,6 +5,7 @@
     "category": "Execution",
     "test_type": "malicious",
     "command": "bash -i",
+    "shell_wrap": false,
     "container_image": "ubuntu:latest"
   },
   {
@@ -12,32 +13,36 @@
     "name": "Execution from /tmp",
     "category": "Execution",
     "test_type": "malicious",
-    "command": "bash -c 'cp /bin/ls /tmp/malware && /tmp/malware'",
-    "container_image": "ubuntu:latest"
+    "command": "cp /bin/ls /tmp/malware && /tmp/malware",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
   },
   {
     "id": "PRIV-01",
     "name": "Sensitive File Modification (/etc/shadow)",
     "category": "Privilege Escalation",
     "test_type": "malicious",
-    "command": "bash -c 'echo hacked >> /etc/shadow'",
-    "container_image": "ubuntu:latest"
+    "command": "echo hacked >> /etc/shadow",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
   },
   {
     "id": "EVASION-01",
     "name": "Path Obfuscation via Symlink",
     "category": "Evasion",
     "test_type": "malicious",
-    "command": "bash -c 'ln -s /usr/bin/cat /tmp/update && /tmp/update /etc/passwd'",
-    "container_image": "ubuntu:latest"
+    "command": "ln -s /bin/cat /tmp/update && /tmp/update /etc/passwd",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
   },
   {
     "id": "EVASION-02",
     "name": "Process Masquerading (kworker)",
     "category": "Evasion",
     "test_type": "malicious",
-    "command": "bash -c 'exec -a [kworker/u4:2] /bin/sh -c \"sleep 1\"'",
-    "container_image": "ubuntu:latest"
+    "command": "exec -a [kworker/u4:2] /bin/sh -c \"sleep 1\"",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
   },
   {
     "id": "NET-01",
@@ -45,7 +50,8 @@
     "category": "Network",
     "test_type": "malicious",
     "command": "nc -z 8.8.8.8 53",
-    "container_image": "custom/alpine-netcat:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/netcat:alpine"
   },
   {
     "id": "DISCOVERY-01",
@@ -53,7 +59,8 @@
     "category": "Discovery",
     "test_type": "malicious",
     "command": "ls -la /.dockerenv",
-    "container_image": "ubuntu:latest"
+    "shell_wrap": false,
+    "container_image": "alpine:latest"
   },
   {
     "id": "DISCOVERY-02",
@@ -61,6 +68,43 @@
     "category": "Discovery",
     "test_type": "malicious",
     "command": "cat /proc/1/cgroup",
-    "container_image": "ubuntu:latest"
+    "shell_wrap": false,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "BENIGN-WEB-01",
+    "name": "Nginx Config Reload and Worker Spawning",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "nginx -g 'daemon off;' & sleep 2 && curl -s http://localhost > /dev/null && nginx -s reload && sleep 2",
+    "shell_wrap": true,
+    "container_image": "nginx:alpine"
+  },
+  {
+    "id": "BENIGN-NET-01",
+    "name": "Node.js External API HTTPS Request",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "node -e 'const https = require(\"https\"); https.get(\"https://api.github.com\", (res) => { process.exit(0); });'",
+    "shell_wrap": true,
+    "container_image": "node:20-alpine"
+  },
+  {
+    "id": "BENIGN-DB-01",
+    "name": "Redis Background Save (Fork & Write)",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "redis-server --daemonize yes && sleep 1 && redis-cli set mykey thesis_test && redis-cli bgsave && sleep 2",
+    "shell_wrap": true,
+    "container_image": "redis:alpine"
+  },
+  {
+    "id": "BENIGN-IO-01",
+    "name": "System Backup (Tar of /etc)",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "tar -czf /tmp/etc_backup.tar.gz /etc 2>/dev/null || true",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
   }
 ]

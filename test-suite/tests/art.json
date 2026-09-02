@@ -5,7 +5,8 @@
     "category": "Evasion",
     "test_type": "malicious",
     "command": "goart -t T1036.003 -i 3",
-    "container_image": "custom/alpine-art:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
   },
   {
     "id": "T1003.008-#1",
@@ -13,7 +14,8 @@
     "category": "Credential Access",
     "test_type": "malicious",
     "command": "goart -t T1003.008 -i 0",
-    "container_image": "custom/alpine-art:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
   },
   {
     "id": "T1003.008-#3",
@@ -21,7 +23,8 @@
     "category": "Credential Access",
     "test_type": "malicious",
     "command": "goart -t T1003.008 -i 2",
-    "container_image": "custom/alpine-art:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
   },
   {
     "id": "T1082-#3",
@@ -29,7 +32,8 @@
     "category": "Discovery",
     "test_type": "malicious",
     "command": "goart -t T1082 -i 2",
-    "container_image": "custom/alpine-art:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
   },
   {
     "id": "T1082-#4",
@@ -37,7 +41,8 @@
     "category": "Discovery",
     "test_type": "malicious",
     "command": "goart -t T1082 -i 3",
-    "container_image": "custom/alpine-art:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
   },
   {
     "id": "T1082-#5",
@@ -45,7 +50,8 @@
     "category": "Discovery",
     "test_type": "malicious",
     "command": "goart -t T1082 -i 4",
-    "container_image": "custom/alpine-art:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
   },
   {
     "id": "T1082-#8",
@@ -53,7 +59,8 @@
     "category": "Discovery",
     "test_type": "malicious",
     "command": "goart -t T1082 -i 7",
-    "container_image": "custom/alpine-art:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
   },
   {
     "id": "T1082-#12",
@@ -61,7 +68,8 @@
     "category": "Discovery",
     "test_type": "malicious",
     "command": "goart -t T1082 -i 11",
-    "container_image": "custom/alpine-art:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
   },
   {
     "id": "T1082-#25",
@@ -69,7 +77,8 @@
     "category": "Discovery",
     "test_type": "malicious",
     "command": "goart -t T1082 -i 24",
-    "container_image": "custom/alpine-art:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
   },
   {
     "id": "T1614-#2",
@@ -77,6 +86,7 @@
     "category": "Discovery",
     "test_type": "malicious",
     "command": "goart -t T1614 -i 1",
-    "container_image": "custom/alpine-art:v1.0"
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
   }
 ]

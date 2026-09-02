@@ -12,11 +12,17 @@ class TestRunner:
         self.client = docker.from_env()
 
     def run_test(self, test: Test) -> tuple[str, float]:
+        cmd = test.command
+        if test.shell_wrap:
+            cmd = f"/bin/sh -c '{cmd}'"
+
+        logger.info(f"[{test.id}] Running test command: {cmd}") # TODO: delete this line after debugging
+
         start_time = time.time()
         try:
             container = self.client.containers.create(
                 image=test.container_image,
-                command=test.command,
+                command=cmd,
                 detach=True,
             )
             short_container_id = container.id[:12]
