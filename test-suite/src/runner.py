@@ -16,8 +16,6 @@ class TestRunner:
         if test.shell_wrap:
             cmd = f"/bin/sh -c '{cmd}'"
 
-        logger.info(f"[{test.id}] Running test command: {cmd}") # TODO: delete this line after debugging
-
         start_time = time.time()
         try:
             container = self.client.containers.create(
