@@ -1,8 +1,11 @@
 FROM alpine:latest AS builder
 
 RUN apk add --no-cache \
+    bash \
+    curl \
     git \
     go \
+    unzip \
     make
 
 RUN git clone https://github.com/activeshadow/go-atomicredteam.git /goart && \
@@ -16,9 +19,7 @@ RUN apk add --no-cache \
     curl \
     sudo \
     wget \
-    iproute2 \
-    python3 \
-    unzip
+    python3
 
 COPY --from=builder /goart/bin/goart /usr/local/bin/goart
 
