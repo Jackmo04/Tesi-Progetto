@@ -1,0 +1,82 @@
+[
+  {
+    "id": "T1036.003-#2",
+    "name": "Masquerading as Linux crond process",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "goart -t T1036.003 -i 3",
+    "container_image": "custom/alpine-art:v1.0"
+  },
+  {
+    "id": "T1003.008-#1",
+    "name": "Access /etc/shadow",
+    "category": "Credential Access",
+    "test_type": "malicious",
+    "command": "goart -t T1003.008 -i 0",
+    "container_image": "custom/alpine-art:v1.0"
+  },
+  {
+    "id": "T1003.008-#3",
+    "name": "Access /etc/passwd",
+    "category": "Credential Access",
+    "test_type": "malicious",
+    "command": "goart -t T1003.008 -i 2",
+    "container_image": "custom/alpine-art:v1.0"
+  },
+  {
+    "id": "T1082-#3",
+    "name": "List OS Information",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 2",
+    "container_image": "custom/alpine-art:v1.0"
+  },
+  {
+    "id": "T1082-#4",
+    "name": "Linux VM Check via Hardware",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 3",
+    "container_image": "custom/alpine-art:v1.0"
+  },
+  {
+    "id": "T1082-#5",
+    "name": "Linux VM Check via Kernel Modules",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 4",
+    "container_image": "custom/alpine-art:v1.0"
+  },
+  {
+    "id": "T1082-#8",
+    "name": "Hostname Discovery",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 7",
+    "container_image": "custom/alpine-art:v1.0"
+  },
+  {
+    "id": "T1082-#12",
+    "name": "Environment variables discovery",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 11",
+    "container_image": "custom/alpine-art:v1.0"
+  },
+  {
+    "id": "T1082-#25",
+    "name": "Linux List Kernel Modules",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 24",
+    "container_image": "custom/alpine-art:v1.0"
+  },
+  {
+    "id": "T1614-#2",
+    "name": "Get geolocation info through IP-Lookup services",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1614 -i 1",
+    "container_image": "custom/alpine-art:v1.0"
+  }
+]

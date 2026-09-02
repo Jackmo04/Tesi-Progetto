@@ -46,5 +46,21 @@
     "test_type": "malicious",
     "command": "nc -z 8.8.8.8 53",
     "container_image": "custom/alpine-netcat:v1.0"
+  },
+  {
+    "id": "DISCOVERY-01",
+    "name": "Discovery of Docker Environment",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "ls -la /.dockerenv",
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "DISCOVERY-02",
+    "name": "Discovery of Cgroup Information",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "cat /proc/1/cgroup",
+    "container_image": "ubuntu:latest"
   }
 ]
