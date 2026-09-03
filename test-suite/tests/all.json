@@ -1,0 +1,218 @@
+[
+  {
+    "id": "EXEC-01",
+    "name": "Interactive Shell Spawn",
+    "category": "Execution",
+    "test_type": "malicious",
+    "command": "bash -i",
+    "shell_wrap": false,
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "EXEC-02",
+    "name": "Execution from /tmp",
+    "category": "Execution",
+    "test_type": "malicious",
+    "command": "cp /bin/ls /tmp/malware && /tmp/malware",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "PRIV-01",
+    "name": "Sensitive File Modification (/etc/shadow)",
+    "category": "Privilege Escalation",
+    "test_type": "malicious",
+    "command": "echo hacked >> /etc/shadow",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "EVASION-01",
+    "name": "Path Obfuscation via Symlink",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "ln -s /bin/cat /tmp/update && /tmp/update /etc/passwd",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "EVASION-02",
+    "name": "Process Masquerading (kworker)",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "exec -a [kworker/u4:2] /bin/sh -c \"sleep 1\"",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "NET-01",
+    "name": "Suspicious Network Connection to External IP",
+    "category": "Network",
+    "test_type": "malicious",
+    "command": "nc -z 8.8.8.8 53",
+    "shell_wrap": false,
+    "container_image": "custom/netcat:alpine"
+  },
+  {
+    "id": "DISCOVERY-01",
+    "name": "Discovery of Docker Environment",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "ls -la /.dockerenv",
+    "shell_wrap": false,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "DISCOVERY-02",
+    "name": "Discovery of Cgroup Information",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "cat /proc/1/cgroup",
+    "shell_wrap": false,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "BENIGN-WEB-01",
+    "name": "Nginx Config Reload and Worker Spawning",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "nginx -g 'daemon off;' & sleep 2 && curl -s http://localhost > /dev/null && nginx -s reload && sleep 2",
+    "shell_wrap": true,
+    "container_image": "nginx:alpine"
+  },
+  {
+    "id": "BENIGN-NET-01",
+    "name": "Node.js External API HTTPS Request",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "node -e 'const https = require(\"https\"); https.get(\"https://api.github.com\", (res) => { process.exit(0); });'",
+    "shell_wrap": true,
+    "container_image": "node:20-alpine"
+  },
+  {
+    "id": "BENIGN-DB-01",
+    "name": "Redis Background Save (Fork & Write)",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "redis-server --daemonize yes && sleep 1 && redis-cli set mykey thesis_test && redis-cli bgsave && sleep 2",
+    "shell_wrap": true,
+    "container_image": "redis:alpine"
+  },
+  {
+    "id": "BENIGN-IO-01",
+    "name": "System Backup (Tar of /etc)",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "tar -czf /tmp/etc_backup.tar.gz /etc 2>/dev/null || true",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "T1036.003-#2",
+    "name": "Masquerading as Linux crond process",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "goart -t T1036.003 -i 3",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1003.008-#1",
+    "name": "Access /etc/shadow",
+    "category": "Credential Access",
+    "test_type": "malicious",
+    "command": "goart -t T1003.008 -i 0",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1003.008-#3",
+    "name": "Access /etc/passwd",
+    "category": "Credential Access",
+    "test_type": "malicious",
+    "command": "goart -t T1003.008 -i 2",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-#3",
+    "name": "List OS Information",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 2",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-#4",
+    "name": "Linux VM Check via Hardware",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 3",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-#5",
+    "name": "Linux VM Check via Kernel Modules",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 4",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-#8",
+    "name": "Hostname Discovery",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 7",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-#12",
+    "name": "Environment variables discovery",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 11",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-#25",
+    "name": "Linux List Kernel Modules",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 24",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1614-#2",
+    "name": "Get geolocation info through IP-Lookup services",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1614 -i 1",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "STRESS-01",
+    "name": "Syscall Flood (Exec & Open)",
+    "category": "Stress",
+    "test_type": "malicious",
+    "command": "stress-ng --exec 8 --open 8 --timeout 30s",
+    "shell_wrap": false,
+    "container_image": "custom/stress-ng:alpine"
+  },
+  {
+    "id": "STRESS-02",
+    "name": "I/O & Memory Stress Test",
+    "category": "Stress",
+    "test_type": "malicious",
+    "command": "stress-ng --hdd 4 --vm 2 --vm-bytes 128M --timeout 30s",
+    "shell_wrap": false,
+    "container_image": "custom/stress-ng:alpine"
+  }
+]
