@@ -1,3 +1,0 @@
-Most of the TracingPolicy in this directory come from the official GitHub repo for Tetragon.
-Some have been modified to improve filtering.
-URL: https://github.com/cilium/tetragon/blob/main/examples/tracingpolicy/
