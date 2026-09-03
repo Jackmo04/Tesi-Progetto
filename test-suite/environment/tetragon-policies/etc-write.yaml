@@ -1,3 +1,5 @@
+# Origin: https://github.com/cilium/tetragon/blob/0d7e1fe1d24fdebabdca22aa65c9138dc14ec7ab/examples/tracingpolicy/filename_monitoring_filtered.yaml
+# Modified to filter the entire /etc/ directory
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:

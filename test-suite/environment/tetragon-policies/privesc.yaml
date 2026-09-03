@@ -1,3 +1,4 @@
+# Detect changes in Linux Capabilities
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
@@ -21,4 +22,4 @@ spec:
     - matchBinaries:
       - operator: "NotIn"
         values:
-        - "/usr/sbin/runc"
+        - "/usr/sbin/runc" # excluded for filtering

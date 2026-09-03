@@ -1,3 +1,4 @@
+# Detect any spawned shell
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
@@ -20,4 +21,4 @@ spec:
     - matchPIDs:
         - isNamespacePID: true
           operator: "NotIn"
-          values: [0]
+          values: [0] # Filter out host

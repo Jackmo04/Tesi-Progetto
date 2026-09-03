@@ -1,3 +1,4 @@
+# Detect TCP connection
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
@@ -13,4 +14,4 @@ spec:
       - matchPIDs:
           - isNamespacePID: true
             operator: "NotIn"
-            values: [0, 1]
+            values: [0, 1] # Exclude host and process 1
