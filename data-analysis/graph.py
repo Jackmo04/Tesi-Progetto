@@ -36,7 +36,7 @@ df_cpu['Strumento'] = df_cpu['Strumento'].str.replace('_CPU_Avg(%)', '', regex=F
 
 sns.barplot(data=df_cpu, x='Test_ID', y='CPU Media (%)', hue='Strumento', palette=COLORS)
 plt.title("Impatto sulla CPU per Scenario di Test", pad=20, fontweight='bold')
-plt.xlabel("Test")
+plt.xlabel("ID Test")
 plt.ylabel("CPU Media (%)")
 plt.xticks(rotation=45)
 plt.tight_layout()
@@ -53,12 +53,31 @@ df_ram = df_raw.melt(
 df_ram['Strumento'] = df_ram['Strumento'].str.replace('_RAM_Max(MB)', '', regex=False)
 
 sns.barplot(data=df_ram, x='Test_ID', y='RAM Picco (MB)', hue='Strumento', palette=COLORS)
-plt.title("Consumo Massimo di Memoria (RSS) per Scenario di Test", pad=20, fontweight='bold')
-plt.xlabel("Test")
+plt.title("Consumo Massimo di Memoria RAM per Scenario di Test", pad=20, fontweight='bold')
+plt.xlabel("ID Test")
 plt.ylabel("Picco utilizzo RAM (MB)")
 plt.xticks(rotation=45)
 plt.tight_layout()
 plt.savefig("ram_benchmark.pdf", format="pdf", bbox_inches="tight")
+
+# Drops
+plt.figure(figsize=(12, 6))
+df_drops = df_raw.melt(
+    id_vars=['Test_ID'],
+    value_vars=['Falco_Drops_Delta', 'Tetragon_Drops_Delta'],
+    var_name='Strumento',
+    value_name='Eventi Persi'
+)
+df_drops['Strumento'] = df_drops['Strumento'].str.replace('_Drops_Delta', '', regex=False)
+
+sns.barplot(data=df_drops, x='Test_ID', y='Eventi Persi', hue='Strumento', palette=COLORS)
+plt.title("Eventi Persi per Scenario di Test", pad=20, fontweight='bold')
+plt.xlabel("ID Test")
+plt.ylabel("Eventi Persi")
+plt.xticks(rotation=45)
+plt.yscale("symlog")
+plt.tight_layout()
+plt.savefig("drops_benchmark.pdf", format="pdf", bbox_inches="tight")
 
 # Recall & Precision
 plt.figure(figsize=(8, 5))
