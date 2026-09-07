@@ -1,0 +1,200 @@
+[
+  {
+    "id": "EXEC-SHELL",
+    "name": "Interactive Shell Spawn",
+    "category": "Execution",
+    "test_type": "malicious",
+    "command": "bash -i",
+    "shell_wrap": true,
+    "container_image": "ubuntu:latest"
+  },
+  {
+    "id": "EXEC-TMP",
+    "name": "Execution from /tmp",
+    "category": "Execution",
+    "test_type": "malicious",
+    "command": "cp /bin/ls /tmp/malware && /tmp/malware",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "PRIVESC-SHADOW",
+    "name": "Sensitive File Modification (/etc/shadow)",
+    "category": "Privilege Escalation",
+    "test_type": "malicious",
+    "command": "echo hacked >> /etc/shadow",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "EVASION-SYMLINK",
+    "name": "Path Obfuscation via Symlink",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "ln -s /bin/cat /tmp/update && /tmp/update /etc/passwd",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "EVASION-MASQUERADE",
+    "name": "Process Masquerading (kworker)",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "exec -a [kworker/u4:2] /bin/sh -c \"sleep 1\"",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "NET-EXT-CONN",
+    "name": "Suspicious Network Connection to External IP",
+    "category": "Network",
+    "test_type": "malicious",
+    "command": "nc -z 8.8.8.8 53",
+    "shell_wrap": false,
+    "container_image": "custom/netcat:alpine"
+  },
+  {
+    "id": "DISCOVERY-DOCKER",
+    "name": "Discovery of Docker Environment",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "ls -la /.dockerenv",
+    "shell_wrap": false,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "DISCOVERY-CGROUP",
+    "name": "Discovery of Cgroup Information",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "cat /proc/1/cgroup",
+    "shell_wrap": false,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "BENIGN-WEB",
+    "name": "Nginx Config Reload and Worker Spawning",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "nginx -g 'daemon off;' & sleep 2 && curl -s http://localhost > /dev/null && nginx -s reload && sleep 2",
+    "shell_wrap": true,
+    "container_image": "nginx:alpine"
+  },
+  {
+    "id": "BENIGN-NET",
+    "name": "Node.js External API HTTPS Request",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "node -e 'const https = require(\"https\"); https.get(\"https://api.github.com\", (res) => { process.exit(0); });'",
+    "shell_wrap": true,
+    "container_image": "node:20-alpine"
+  },
+  {
+    "id": "BENIGN-DB",
+    "name": "Redis Background Save (Fork & Write)",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "redis-server --daemonize yes && sleep 1 && redis-cli set mykey thesis_test && redis-cli bgsave && sleep 2",
+    "shell_wrap": true,
+    "container_image": "redis:alpine"
+  },
+  {
+    "id": "BENIGN-IO",
+    "name": "System Backup (Tar of /etc)",
+    "category": "False_Positive_Testing",
+    "test_type": "benign",
+    "command": "tar -czf /tmp/etc_backup.tar.gz /etc 2>/dev/null || true",
+    "shell_wrap": true,
+    "container_image": "alpine:latest"
+  },
+  {
+    "id": "T1036.003-ART#2",
+    "name": "Masquerading as Linux crond process",
+    "category": "Evasion",
+    "test_type": "malicious",
+    "command": "goart -t T1036.003 -i 3",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1003.008-ART#1",
+    "name": "Access /etc/shadow",
+    "category": "Credential Access",
+    "test_type": "malicious",
+    "command": "goart -t T1003.008 -i 0",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1003.008-ART#3",
+    "name": "Access /etc/passwd",
+    "category": "Credential Access",
+    "test_type": "malicious",
+    "command": "goart -t T1003.008 -i 2",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-ART#3",
+    "name": "List OS Information",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 2",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-ART#4",
+    "name": "Linux VM Check via Hardware",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 3",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-ART#5",
+    "name": "Linux VM Check via Kernel Modules",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 4",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-ART#8",
+    "name": "Hostname Discovery",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 7",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-ART#12",
+    "name": "Environment variables discovery",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 11",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1082-ART#25",
+    "name": "Linux List Kernel Modules",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1082 -i 24",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  },
+  {
+    "id": "T1614-ART#2",
+    "name": "Get geolocation info through IP-Lookup services",
+    "category": "Discovery",
+    "test_type": "malicious",
+    "command": "goart -t T1614 -i 1",
+    "shell_wrap": false,
+    "container_image": "custom/art:alpine"
+  }
+]
