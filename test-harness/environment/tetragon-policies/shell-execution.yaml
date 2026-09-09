@@ -17,7 +17,8 @@ spec:
         values:
         - "/bin/bash"
         - "/bin/sh"
-        - "/bin/dash"
+        - "/usr/bin/bash"
+        - "/usr/bin/sh"
     - matchPIDs:
         - isNamespacePID: true
           operator: "NotIn"
