@@ -13,5 +13,6 @@ spec:
     selectors:
       - matchPIDs:
           - isNamespacePID: true
+            followForks: false
             operator: "NotIn"
-            values: [0, 1] # Exclude host and process 1
+            values: [0] # Exclude host and process 1
